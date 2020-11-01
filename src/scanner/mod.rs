@@ -24,7 +24,7 @@ pub enum TokenType {
   Print, Return, Super, This,
   True, Var, While,
 
-  Error
+  Error, EOF
 }
 
 #[derive(Debug)]

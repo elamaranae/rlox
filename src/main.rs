@@ -7,6 +7,7 @@ pub mod scanner;
 pub mod chunk;
 pub mod vm;
 pub mod value;
+pub mod compiler;
 
 use scanner::Scanner;
 use chunk::{Chunk, OpCode};
@@ -14,28 +15,6 @@ use vm::*;
 
 fn main() {
     let args: Vec<String>  = env::args().collect();    
-    let mut chunk: Chunk = Default::default();
-
-    let constant = chunk.add_constant(3.4);
-    chunk.write_chunk(OpCode::Constant, 1);
-    chunk.write_chunk(OpCode::OpArg(constant), 1);
-
-    let constant = chunk.add_constant(1.4);
-    chunk.write_chunk(OpCode::Constant, 1);
-    chunk.write_chunk(OpCode::OpArg(constant), 1);
-
-    chunk.write_chunk(OpCode::Add, 1);
-
-    let constant = chunk.add_constant(2.0);
-    chunk.write_chunk(OpCode::Constant, 1);
-    chunk.write_chunk(OpCode::OpArg(constant), 1);
-
-    chunk.write_chunk(OpCode::Divide, 1);
-
-    chunk.write_chunk(OpCode::Return, 2);
-
-    let vm: VM = Default::default();
-    vm.interpret(chunk);
 
     if args.len() == 1 {
         loop {
@@ -45,11 +24,13 @@ fn main() {
             let stdin = io::stdin();
             match stdin.read_line(&mut line) {
                 Ok(_n) => {
-                    let mut scanner = Scanner::new(line);
-                    if let Err(e) = scanner.run() {
-                        println!("Scanner error. {}", e);
-                        process::exit(1);
-                    }
+                    // let mut scanner = Scanner::new(line);
+                    // if let Err(e) = scanner.run() {
+                    //     println!("Scanner error. {}", e);
+                    //     process::exit(1);
+                    // }
+                    let vm: VM = Default::default();
+                    vm.interpret(line);
                 }
                 Err(error) => println!("error: {}", error),
             }

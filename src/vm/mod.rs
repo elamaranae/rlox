@@ -1,4 +1,5 @@
 use crate::{ chunk::*, OpCode, value::* };
+use crate::compiler::*;
 
 pub enum InterpretResult {
     Ok,
@@ -14,7 +15,14 @@ pub struct VM {
 }
 
 impl VM {
-    pub fn interpret(&self, chunk: Chunk) -> InterpretResult {
+    pub fn interpret(&self, source: String) -> InterpretResult {
+        let compiler: Compiler = Default::default();
+        
+        let chunk = match compiler.compile(source) {
+            Ok(chunk) => chunk,
+            Err(e) => return InterpretResult::CompileError
+        };
+
         let mut vm = VM {
             chunk,
             ip: 0,
