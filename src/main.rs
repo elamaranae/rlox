@@ -4,10 +4,38 @@ use std::env;
 use std::fs;
 
 pub mod scanner;
-use crate::scanner::Scanner;
+pub mod chunk;
+pub mod vm;
+pub mod value;
+
+use scanner::Scanner;
+use chunk::{Chunk, OpCode};
+use vm::*;
 
 fn main() {
     let args: Vec<String>  = env::args().collect();    
+    let mut chunk: Chunk = Default::default();
+
+    let constant = chunk.add_constant(3.4);
+    chunk.write_chunk(OpCode::Constant, 1);
+    chunk.write_chunk(OpCode::OpArg(constant), 1);
+
+    let constant = chunk.add_constant(1.4);
+    chunk.write_chunk(OpCode::Constant, 1);
+    chunk.write_chunk(OpCode::OpArg(constant), 1);
+
+    chunk.write_chunk(OpCode::Add, 1);
+
+    let constant = chunk.add_constant(2.0);
+    chunk.write_chunk(OpCode::Constant, 1);
+    chunk.write_chunk(OpCode::OpArg(constant), 1);
+
+    chunk.write_chunk(OpCode::Divide, 1);
+
+    chunk.write_chunk(OpCode::Return, 2);
+
+    let vm: VM = Default::default();
+    vm.interpret(chunk);
 
     if args.len() == 1 {
         loop {

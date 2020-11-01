@@ -45,8 +45,8 @@ pub struct Scanner {
 
 impl Token {
     fn new(token_type: TokenType, lexeme: String,
-           line: usize) -> Token {
-        Token {
+           line: usize) -> Self {
+        Self {
             token_type,
             lexeme,
             line
@@ -55,8 +55,8 @@ impl Token {
 }
 
 impl Scanner {
-    pub fn new(contents: String) -> Scanner {
-        Scanner { 
+    pub fn new(contents: String) -> Self {
+        Self { 
             contents,
             start: 0,
             current: 0,
@@ -65,8 +65,8 @@ impl Scanner {
     }
 
     pub fn run(&mut self) -> Result<(), Box<dyn Error>> {
-        for val in self {
-            println!("{:?}", val);
+        for tokens in self {
+            println!("{:?}", tokens);
         }
         Ok(())
     }
