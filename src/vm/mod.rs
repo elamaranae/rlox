@@ -1,4 +1,7 @@
-use crate::{ chunk::*, OpCode, value::* };
+use std::io;
+
+use crate::chunk::*;
+use crate::value::*;
 use crate::compiler::*;
 
 pub enum InterpretResult {
@@ -15,21 +18,19 @@ pub struct VM {
 }
 
 impl VM {
-    pub fn interpret(&self, source: String) -> InterpretResult {
-        let compiler: Compiler = Default::default();
+    pub fn interpret(&mut self, source: String, out: &mut io::Write) -> InterpretResult {
+        let mut compiler: Compiler = Compiler::new(source);
         
-        let chunk = match compiler.compile(source) {
+        let chunk = match compiler.compile() {
             Ok(chunk) => chunk,
-            Err(e) => return InterpretResult::CompileError
+            Err(_e) => return InterpretResult::CompileError
         };
 
-        let mut vm = VM {
-            chunk,
-            ip: 0,
-            stack: vec![],
-        };
+        self.ip = 0;
+        self.chunk = chunk;
         
-        vm.run()
+        self.run(out);
+        InterpretResult::Ok
     }
 
     fn advance(&mut self) -> OpCode {
@@ -49,10 +50,10 @@ impl VM {
        if let Some(opnd1) = self.stack.pop() {
             if let Some(opnd2) = self.stack.pop() {
                 let result = match op {
-                    '+' => opnd1 + opnd2,
-                    '-' => opnd1 - opnd2,
-                    '*' => opnd1 * opnd2,
-                    '/' => opnd1 / opnd2,
+                    '+' => opnd2 + opnd1,
+                    '-' => opnd2 - opnd1,
+                    '*' => opnd2 * opnd1,
+                    '/' => opnd2 / opnd1,
                      _  => { 0.0 }
                 };
                 self.stack.push(result);
@@ -60,7 +61,7 @@ impl VM {
         }
     }
 
-    fn run(&mut self) -> InterpretResult {
+    fn run(&mut self, out: &mut io::Write) -> InterpretResult {
 
         loop {
             debug::disassemble_instruction(&self.chunk, self.ip);
@@ -70,9 +71,7 @@ impl VM {
 
             match instruction {
                 OpCode::Return => {
-                    // if let Some(value) = self.stack.pop() {
-                    //     print_value(value);
-                    // }
+                    write!(out, "{:?}", self.stack.pop().unwrap());
                     return InterpretResult::Ok;
                 },
 

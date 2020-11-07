@@ -2,7 +2,9 @@ use std::error::Error;
 
 #[derive(Debug)]
 #[derive(PartialEq)]
+#[derive(Copy, Clone)]
 pub enum TokenType {
+  Default,
   // Single-character tokens.
   LeftParen, RightParen,
   LeftBrace, RightBrace,
@@ -27,6 +29,16 @@ pub enum TokenType {
   Error, EOF
 }
 
+impl Default for Token {
+    fn default() -> Token { 
+        Token {
+            token_type: TokenType::Default,
+            lexeme: String::from("Default"),
+            line: 0
+        }
+    }
+}
+
 #[derive(Debug)]
 pub struct Token {
     pub token_type: TokenType,
@@ -35,6 +47,7 @@ pub struct Token {
 }
 
 #[derive(Debug)]
+#[derive(Default)]
 pub struct Scanner {
     contents: String,
     start: usize,
