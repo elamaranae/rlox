@@ -1,2 +1,14 @@
-# rlox [![Build Status](https://travis-ci.com/marans/rlox.svg?branch=main)](https://travis-ci.com/marans/rlox)
-A go at implementing the Lox language in Rust. Work in Progress.
+# RLox
+
+Implementation of the Lox language in Rust.
+
+## Usage
+
+```sh
+rlox filename.lox
+```
+
+### Note
+
+The RLox interpreter is still a work in progress. Currently, it supports only
+arithmetic expressions.
